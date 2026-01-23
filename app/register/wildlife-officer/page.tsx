@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Toast from "@/components/Toast";
 
 export default function WildlifeOfficerRegisterPage() {
+  const router = useRouter();
+
   const [username, setUsername] = useState("");
-  const [dwcId, setDwcId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [dwcId, setDwcId] = useState("");
+
+  const [showToast, setShowToast] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,107 +24,84 @@ export default function WildlifeOfficerRegisterPage() {
         username,
         email,
         password,
-        role: "officer", // 👈 IMPORTANT
-        dwcId,           // 👈 REQUIRED ONLY HERE
+        role: "officer",      // ✅ FIXED
+        dwcId,                // ✅ Officer-only field
       }),
     });
 
     const data = await res.json();
 
-    if (data.success) {
-      alert("Wildlife Officer registration successful");
-    } else {
-      alert(data.message || "Registration failed");
+    if (!data.success) {
+      alert(data.message);
+      return;
     }
+
+    // ✅ Show success toast
+    setShowToast(true);
+
+    // Redirect after toast
+    setTimeout(() => {
+      router.push("/login");
+    }, 2500);
   };
 
   return (
-    <section className="bg-[#F5F5DC] min-h-screen flex items-center justify-center py-20">
-      <div className="bg-[#E0E0E0] w-full max-w-xl px-10 py-12 rounded-lg shadow-lg">
+    <>
+      <Toast
+        show={showToast}
+        message="Wildlife Officer account created successfully"
+      />
 
-        {/* Title */}
-        <h1 className="text-2xl md:text-3xl font-bold text-center text-[#263238] mb-8">
-          EcoLens Register for Wildlife Officers
-        </h1>
+      <section className="bg-[#F5F5DC] min-h-screen flex items-center justify-center py-20">
+        <div className="bg-[#E0E0E0] w-full max-w-xl px-10 py-12 rounded-lg shadow-lg">
 
-        {/* Form */}
-        <form className="space-y-5" onSubmit={handleRegister}>
+          <h1 className="text-2xl font-bold text-center mb-8">
+            EcoLens Register for Wildlife Officers
+          </h1>
 
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium text-[#263238] mb-1">
-              Username
-            </label>
+          <form className="space-y-5" onSubmit={handleRegister}>
+
             <input
-              type="text"
-              placeholder="Enter username"
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              className="w-full px-4 py-3 rounded"
+              required
             />
-          </div>
 
-          {/* DWC ID */}
-          <div>
-            <label className="block text-sm font-medium text-[#263238] mb-1">
-              DWC ID number
-            </label>
             <input
-              type="text"
-              placeholder="Enter DWC ID"
+              placeholder="DWC ID"
               value={dwcId}
               onChange={(e) => setDwcId(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              className="w-full px-4 py-3 rounded"
+              required
             />
-          </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-[#263238] mb-1">
-              Email
-            </label>
             <input
+              placeholder="Email"
               type="email"
-              placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              className="w-full px-4 py-3 rounded"
+              required
             />
-          </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-[#263238] mb-1">
-              Password
-            </label>
             <input
+              placeholder="Password"
               type="password"
-              placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              className="w-full px-4 py-3 rounded"
+              required
             />
-          </div>
 
-          {/* Register Button */}
-          <button
-            type="submit"
-            className="w-full mt-4 py-3 bg-[#2E7D32] text-[#F5F5DC] font-semibold rounded-full hover:bg-[#66BB6A] transition"
-          >
-            Register
-          </button>
+            <button className="w-full bg-[#2E7D32] text-white py-3 rounded-full">
+              Register
+            </button>
+          </form>
 
-        </form>
-
-        {/* Login Link */}
-        <p className="mt-6 text-center text-sm text-[#263238]">
-          Already registered?{" "}
-          <a href="/login" className="font-medium text-[#2E7D32] hover:underline">
-            Login
-          </a>
-        </p>
-
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }
