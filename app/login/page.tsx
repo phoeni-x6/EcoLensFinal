@@ -1,7 +1,19 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+
+const Dashboard = () => {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") return null;
+
+  return <h1>Welcome {session?.user.name}</h1>;
+};
+
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,30 +26,36 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
     });
 
-    const data = await res.json();
     setLoading(false);
 
-    if (!data.success) {
-      alert(data.message || "Login failed");
+    if (res?.error) {
+      alert(res.error);
       return;
     }
 
-    // ✅ Store user temporarily (we’ll improve later)
-    localStorage.setItem("user", JSON.stringify(data.user));
+    /**
+     * Role-based redirect
+     * (Role is injected into session by NextAuth callbacks)
+     */
+    const sessionRes = await fetch("/api/auth/session");
+    const session = await sessionRes.json();
 
-    // ✅ Redirect based on role
-    if (data.user.role === "tourist") {
+    const role = session?.user?.role;
+
+    if (role === "tourist") {
       router.push("/explore");
-    } else if (data.user.role === "photographer") {
+    } else if (role === "photographer") {
       router.push("/image-upload");
-    } else if (data.user.role === "officer") {
+    } else if (role === "officer") {
       router.push("/explore");
+    } else {
+      router.push("/");
     }
   };
 
@@ -45,15 +63,12 @@ export default function LoginPage() {
     <section className="bg-[#F5F5DC] min-h-screen flex items-center justify-center py-20">
       <div className="bg-[#E0E0E0] w-full max-w-xl px-10 py-12 rounded-lg shadow-lg">
 
-        {/* Title */}
         <h1 className="text-2xl md:text-3xl font-bold text-center text-[#263238] mb-8">
           EcoLens Login
         </h1>
 
-        {/* Form */}
         <form className="space-y-5" onSubmit={handleLogin}>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-[#263238] mb-1">
               Email
@@ -68,7 +83,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-[#263238] mb-1">
               Password
@@ -83,7 +97,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Login Button */}
           <button
             type="submit"
             disabled={loading}
@@ -94,14 +107,13 @@ export default function LoginPage() {
 
         </form>
 
-        {/* Register Link */}
         <p className="mt-6 text-center text-sm text-[#263238]">
           New User?{" "}
           <a
             href="/register"
             className="font-medium text-[#2E7D32] hover:underline"
           >
-            SignUp to use EcoLens.
+            Sign up to use EcoLens
           </a>
         </p>
 

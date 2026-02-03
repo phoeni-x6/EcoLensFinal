@@ -1,7 +1,9 @@
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Providers from "@/components/Providers";
 
 export default function RootLayout({
   children,
@@ -11,9 +13,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {children}
-        <Footer />
+        {/* ✅ Client Providers wrapper */}
+        <Providers>
+          <Navbar />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

@@ -1,5 +1,16 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+
+const Dashboard = () => {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") return null;
+
+  return <h1>Welcome {session?.user.name}</h1>;
+};
+
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/Toast";

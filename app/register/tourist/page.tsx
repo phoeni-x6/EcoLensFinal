@@ -4,13 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/Toast";
 
-export default function PhotographerRegisterPage() {
+export default function TouristRegisterPage() {
   const router = useRouter();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showToast, setShowToast] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -23,22 +22,19 @@ export default function PhotographerRegisterPage() {
         username,
         email,
         password,
-        role: "photographer",
+        role: "tourist", // ✅ FIXED
       }),
     });
 
     const data = await res.json();
 
-   if (!data.success) {
-  alert(data.message || data.error || "Registration failed");
-  return;
-}
+    if (!data.success) {
+      alert(data.message || data.error || "Registration failed");
+      return;
+    }
 
-
-    // ✅ Show success toast
     setShowToast(true);
 
-    // Redirect after toast
     setTimeout(() => {
       router.push("/login");
     }, 2500);
@@ -53,9 +49,8 @@ export default function PhotographerRegisterPage() {
 
       <section className="bg-[#F5F5DC] min-h-screen flex items-center justify-center py-20">
         <div className="bg-[#E0E0E0] w-full max-w-xl px-10 py-12 rounded-lg shadow-lg">
-
           <h1 className="text-2xl font-bold text-center mb-8">
-            EcoLens Register
+            Tourist Registration
           </h1>
 
           <form className="space-y-5" onSubmit={handleRegister}>
@@ -89,9 +84,8 @@ export default function PhotographerRegisterPage() {
               Register
             </button>
           </form>
-
         </div>
       </section>
     </>
   );
-}   
+}

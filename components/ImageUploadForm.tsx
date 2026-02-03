@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import Image from "next/image";
 
 const ImageUploadForm = () => {
+  const [speciesName, setSpeciesName] = useState("");
   const [location, setLocation] = useState("");
-  const [species, setSpecies] = useState("");
+  const [speciesType, setSpeciesType] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -15,6 +17,58 @@ const ImageUploadForm = () => {
 
     setImageFile(file);
     setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  // ✅ THIS WAS MISSING
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!imageFile) {
+      alert("Please select an image");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      formData.append("speciesName", speciesName);
+      formData.append("speciesType", speciesType);
+      formData.append("location", location);
+
+      const res = await fetch("/api/image-upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let data;
+try {
+  data = await res.json();
+} catch {
+  throw new Error("Server error: Invalid response");
+}
+
+if (!res.ok) {
+  throw new Error(data?.message || "Upload failed");
+}
+
+      }
+
+      alert("Image uploaded successfully ✅");
+
+      // Reset form
+      setSpeciesName("");
+      setLocation("");
+      setSpeciesType("");
+      setImageFile(null);
+      setPreviewUrl(null);
+    } catch (err: any) {
+      alert(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,7 +80,17 @@ const ImageUploadForm = () => {
             Image Upload Form
           </h2>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+
+            {/* Species Name */}
+            <input
+              type="text"
+              placeholder="Species Name (e.g. Sri Lankan Leopard)"
+              value={speciesName}
+              onChange={(e) => setSpeciesName(e.target.value)}
+              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              required
+            />
 
             {/* Image Preview */}
             {previewUrl && (
@@ -49,15 +113,17 @@ const ImageUploadForm = () => {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              required
             />
 
-            {/* Species */}
+            {/* Species Type */}
             <select
-              value={species}
-              onChange={(e) => setSpecies(e.target.value)}
+              value={speciesType}
+              onChange={(e) => setSpeciesType(e.target.value)}
               className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
+              required
             >
-              <option value="">Select Species</option>
+              <option value="">Select Species Type</option>
               <option>Elephant</option>
               <option>Leopard</option>
               <option>Peacock</option>
@@ -72,14 +138,16 @@ const ImageUploadForm = () => {
               accept="image/*"
               onChange={handleImageChange}
               className="w-full bg-white px-4 py-2 rounded text-[#263238]"
+              required
             />
 
             {/* Submit */}
             <button
               type="submit"
-              className="w-full py-3 bg-[#2E7D32] text-[#F5F5DC] font-semibold rounded hover:bg-[#66BB6A] transition"
+              disabled={loading}
+              className="w-full py-3 bg-[#2E7D32] text-[#F5F5DC] font-semibold rounded hover:bg-[#66BB6A] transition disabled:opacity-50"
             >
-              Submit Image
+              {loading ? "Uploading..." : "Submit Image"}
             </button>
 
           </form>
