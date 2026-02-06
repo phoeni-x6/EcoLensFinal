@@ -1,40 +1,41 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
-const ImageUploadForm = () => {
+export default function ImageUploadForm() {
+  const [preview, setPreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+
+  const [speciesType, setSpeciesType] = useState("");
   const [speciesName, setSpeciesName] = useState("");
   const [location, setLocation] = useState("");
-  const [speciesType, setSpeciesType] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
 
-    setImageFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
-  };
+    setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile));
+  }
 
-  // ✅ THIS WAS MISSING
-  const handleSubmit = async (e: FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!imageFile) {
-      alert("Please select an image");
+    if (!file || !speciesType || !speciesName || !location) {
+      alert("Please fill all fields and upload an image.");
       return;
     }
 
-    setLoading(true);
-
     try {
+      setLoading(true);
+
       const formData = new FormData();
-      formData.append("image", imageFile);
-      formData.append("speciesName", speciesName);
+      formData.append("image", file);
       formData.append("speciesType", speciesType);
+      formData.append("speciesName", speciesName);
       formData.append("location", location);
 
       const res = await fetch("/api/image-upload", {
@@ -42,120 +43,126 @@ const ImageUploadForm = () => {
         body: formData,
       });
 
-      if (!res.ok) {
-        let data;
-try {
-  data = await res.json();
-} catch {
-  throw new Error("Server error: Invalid response");
-}
+      if (!res.ok) throw new Error("Upload failed");
 
-if (!res.ok) {
-  throw new Error(data?.message || "Upload failed");
-}
+      alert("Thank you for contributing to wildlife conservation 💚");
 
-      }
-
-      alert("Image uploaded successfully ✅");
-
-      // Reset form
+      setPreview(null);
+      setFile(null);
+      setSpeciesType("");
       setSpeciesName("");
       setLocation("");
-      setSpeciesType("");
-      setImageFile(null);
-      setPreviewUrl(null);
-    } catch (err: any) {
-      alert(err.message || "Something went wrong");
+    } catch {
+      alert("Something went wrong during upload.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <section className="bg-[#F5F5DC] py-20">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="bg-[#E0E0E0] p-10 rounded-lg shadow-lg animate-slideUp">
+    <section className="min-h-[100svh] bg-softbeige px-6 py-24">
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-          <h2 className="text-3xl font-bold text-center text-[#263238] mb-8">
-            Image Upload Form
+        {/* LEFT – INFO */}
+        <div>
+          <p className="uppercase tracking-widest text-sm text-leaf mb-4">
+            Community Contribution
+          </p>
+
+          <h2 className="text-4xl md:text-5xl font-bold text-charcoal leading-tight">
+            Share Wildlife Sightings <br />
+            <span className="text-forest">For Conservation</span>
           </h2>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <p className="mt-6 text-textgrey max-w-md leading-relaxed">
+            Your uploaded images help researchers understand wildlife movement
+            and protect vulnerable species across natural habitats.
+          </p>
 
-            {/* Species Name */}
-            <input
-              type="text"
-              placeholder="Species Name (e.g. Sri Lankan Leopard)"
-              value={speciesName}
-              onChange={(e) => setSpeciesName(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
-              required
-            />
+          {/* 🌱 Conservation Logic */}
+          <div className="mt-8 rounded-2xl bg-offwhite border border-forest/20 p-6">
+            <h4 className="font-semibold text-forest mb-3">
+              What happens after you upload?
+            </h4>
 
-            {/* Image Preview */}
-            {previewUrl && (
-              <div className="flex justify-center">
-                <div className="relative w-64 h-40 rounded-lg overflow-hidden shadow-md">
-                  <Image
-                    src={previewUrl}
-                    alt="Image Preview"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            )}
+            <ul className="space-y-2 text-sm text-textgrey">
+              <li>
+                • <strong>Non-endangered species:</strong> location may appear on
+                our public wildlife map.
+              </li>
+              <li>
+                • <strong>Endangered species:</strong> location stays private and
+                is only reviewed internally to ensure safety.
+              </li>
+            </ul>
 
-            {/* Location */}
-            <input
-              type="text"
-              placeholder="Location / Wildlife Park"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
-              required
-            />
-
-            {/* Species Type */}
-            <select
-              value={speciesType}
-              onChange={(e) => setSpeciesType(e.target.value)}
-              className="w-full px-4 py-3 rounded bg-white text-[#263238] outline-none focus:ring-2 focus:ring-[#66BB6A]"
-              required
-            >
-              <option value="">Select Species Type</option>
-              <option>Elephant</option>
-              <option>Leopard</option>
-              <option>Peacock</option>
-              <option>Deer</option>
-              <option>Monkey</option>
-              <option>Bird</option>
-            </select>
-
-            {/* File Upload */}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full bg-white px-4 py-2 rounded text-[#263238]"
-              required
-            />
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-[#2E7D32] text-[#F5F5DC] font-semibold rounded hover:bg-[#66BB6A] transition disabled:opacity-50"
-            >
-              {loading ? "Uploading..." : "Submit Image"}
-            </button>
-
-          </form>
-
+            <p className="mt-4 text-sm text-forest font-medium">
+              Thank you for helping protect wildlife 🌍
+            </p>
+          </div>
         </div>
+
+        {/* RIGHT – FORM */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-offwhite rounded-3xl p-10 shadow-xl border border-black/5 space-y-6"
+        >
+          <input
+            type="text"
+            placeholder="Species Type (e.g. Mammal)"
+            value={speciesType}
+            onChange={(e) => setSpeciesType(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-forest/40"
+          />
+
+          <select
+            value={speciesName}
+            onChange={(e) => setSpeciesName(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-black/10 bg-white focus:outline-none focus:ring-2 focus:ring-forest/40"
+          >
+            <option value="">Select Species</option>
+            <option>Elephant</option>
+            <option>Leopard</option>
+            <option>Bird</option>
+            <option>Other</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="Location / Wildlife Park"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-forest/40"
+          />
+
+          {/* Upload */}
+          <label>
+            <input type="file" hidden accept="image/*" onChange={handleImageChange} />
+            <div className="border-2 border-dashed border-forest/30 rounded-xl p-6 text-center cursor-pointer hover:bg-forest/5 transition">
+              <p className="text-sm text-charcoal">
+                Click to upload or drag & drop
+              </p>
+              <p className="text-xs text-lightgrey mt-1">
+                JPG or PNG, up to 10MB
+              </p>
+            </div>
+          </label>
+
+          {preview && (
+            <div className="relative w-full h-64 rounded-2xl overflow-hidden shadow-md">
+              <Image src={preview} alt="Preview" fill className="object-cover" />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-forest hover:bg-leaf text-offwhite py-4 rounded-xl font-semibold transition disabled:opacity-50"
+          >
+            {loading ? "Uploading..." : "Submit Image"}
+          </button>
+        </form>
       </div>
     </section>
   );
-};
-
-export default ImageUploadForm;
+}

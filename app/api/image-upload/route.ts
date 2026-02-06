@@ -1,42 +1,34 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
+import cloudinary from "@/lib/cloudinary";
 import Image from "@/models/Image";
-import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-  api_key: process.env.CLOUDINARY_API_KEY!,
-  api_secret: process.env.CLOUDINARY_API_SECRET!,
-});
 
 export async function POST(req: Request) {
   try {
-    // ✅ FIXED: correct App Router usage
+    // ✅ Auth check: ANY logged-in user
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user?.id) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const formData = await req.formData();
 
     const file = formData.get("image") as File | null;
-    const speciesName = formData.get("speciesName") as string | null;
     const speciesType = formData.get("speciesType") as string | null;
+    const speciesName = formData.get("speciesName") as string | null;
     const location = formData.get("location") as string | null;
 
-    if (!file || !speciesName || !speciesType || !location) {
+    if (!file || !speciesType || !speciesName || !location) {
       return NextResponse.json(
-        { message: "Missing fields" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
+    // Upload to Cloudinary
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -51,22 +43,20 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    await Image.create({
+    const imageDoc = await Image.create({
       imageUrl: uploadResult.secure_url,
-      speciesName,
+      cloudinaryId: uploadResult.public_id,
       speciesType,
+      speciesName,
       location,
-      uploadedBy: session.user.id,
+      uploadedBy: session.user.id || session.user.email, // safe fallback
     });
 
-    // ✅ ALWAYS return JSON
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    console.error("UPLOAD ERROR:", error);
-
-    // ✅ GUARANTEED JSON RESPONSE
+    return NextResponse.json(imageDoc, { status: 201 });
+  } catch (error) {
+    console.error("IMAGE UPLOAD ERROR:", error);
     return NextResponse.json(
-      { message: "Upload failed", error: error.message },
+      { error: "Image upload failed" },
       { status: 500 }
     );
   }

@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* ================================
+   ✅ Tailwind v4 Theme Tokens
+   This is REQUIRED for custom colors
+================================ */
+@theme {
+  --color-forest: var(--forest-green);
+  --color-leaf: var(--leaf-green);
+  --color-charcoal: var(--charcoal-black);
+  --color-beige: var(--soft-beige);
+  --color-offwhite: var(--off-white);
+  --color-textgrey: var(--text-grey);
+  --color-lightgrey: var(--light-grey);
+  --color-amber: var(--amber);
+  --color-danger: var(--deep-red);
+  --color-sky: var(--sky-blue);
+}
+
+/* ================================
+   🎨 Base Color Variables
+================================ */
 :root {
   --forest-green: #2E7D32;
   --earth-brown: #5D4037;
@@ -15,36 +35,14 @@
   --text-grey: #616161;
   --light-grey: #9E9E9E;
 
-  /* Add these for body */
+  /* Global background / text */
   --background: var(--soft-beige);
   --foreground: var(--charcoal-black);
 }
 
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.perspective {
-  perspective: 1000px;
-}
-
-.transform-style-preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
-}
-
-.rotate-y-180 {
-  transform: rotateY(180deg);
-}
-
-
-
-
+/* ================================
+   🌍 Global Elements
+================================ */
 body {
   background: var(--background);
   color: var(--foreground);
@@ -53,7 +51,14 @@ body {
   padding: 0;
 }
 
-/* 3D Flip helpers */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ================================
+   🧊 3D / Utility Helpers
+================================ */
 .perspective {
   perspective: 1000px;
 }
@@ -70,26 +75,9 @@ body {
   transform: rotateY(180deg);
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 1s ease forwards;
-}
-
-.animate-slideUp {
-  animation: slideUp 0.8s ease forwards;
-}
-
-
+/* ================================
+   ✨ Animations
+================================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -112,14 +100,6 @@ body {
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 1s ease forwards;
-}
-
-.animate-slideUp {
-  animation: slideUp 0.8s ease forwards;
-}
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -129,6 +109,14 @@ body {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.8s ease forwards;
 }
 
 .animate-slideIn {
