@@ -3,42 +3,47 @@ import Link from "next/link";
 
 const Footer: FC = () => {
   return (
-    <footer className="bg-[#2E7D32] text-[#F5F5DC]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-forest text-offwhite">
+      <div className="max-w-7xl mx-auto px-6 py-16">
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
 
           {/* Brand */}
-          <div>
-            <h3 className="text-2xl font-bold">EcoLens</h3>
-            <p className="mt-3 text-sm text-[#F5F5DC]/80 leading-relaxed">
+          <div className="md:col-span-2">
+            <h3 className="text-3xl font-bold tracking-tight">
+              EcoLens
+            </h3>
+            <p className="mt-4 max-w-md text-sm text-offwhite/80 leading-relaxed">
               EcoLens is a wildlife-focused platform dedicated to exploring,
-              documenting, and protecting nature through photography and
-              technology.
+              documenting, and protecting nature through photography,
+              conservation science, and technology.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Navigation */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <h4 className="text-sm uppercase tracking-widest text-leaf mb-4">
+              Explore
+            </h4>
+            <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/" className="hover:text-[#66BB6A] no-underline">
+                <Link href="/" className="hover:text-leaf transition">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="hover:text-[#66BB6A] no-underline">
+                <Link href="/gallery" className="hover:text-leaf transition">
                   Gallery
                 </Link>
               </li>
               <li>
-                <Link href="/explore" className="hover:text-[#66BB6A] no-underline">
+                <Link href="/explore" className="hover:text-leaf transition">
                   Explore Wildlife
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-[#66BB6A] no-underline">
+                <Link href="/about" className="hover:text-leaf transition">
                   About Us
                 </Link>
               </li>
@@ -47,20 +52,28 @@ const Footer: FC = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Contact</h4>
-            <p className="text-sm text-[#F5F5DC]/80">
-              Email: ecolens@gmail.com
+            <h4 className="text-sm uppercase tracking-widest text-leaf mb-4">
+              Contact
+            </h4>
+            <p className="text-sm text-offwhite/80">
+              ecolens@gmail.com
             </p>
-            <p className="mt-2 text-sm text-[#F5F5DC]/80">
-              Location: Sri Lanka
+            <p className="mt-2 text-sm text-offwhite/80">
+              Sri Lanka
             </p>
           </div>
 
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-[#66BB6A]/40 mt-10 pt-6 text-center text-sm text-[#F5F5DC]/70">
-          © {new Date().getFullYear()} EcoLens. All rights reserved.
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-6 border-t border-offwhite/15 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-offwhite/70">
+          <span>
+            © {new Date().getFullYear()} EcoLens. All rights reserved.
+          </span>
+
+          <span className="italic text-offwhite/60">
+            Protecting wildlife through technology 🌱
+          </span>
         </div>
 
       </div>

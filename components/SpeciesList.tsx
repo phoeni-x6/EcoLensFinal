@@ -5,81 +5,100 @@ const speciesData = [
     id: 1,
     name: "Sri Lankan Leopard",
     image: "/images/1.jpg",
+    status: "Endangered",
     details: [
       "Scientific Name: Panthera pardus kotiya",
-      "Status: Endangered",
       "Habitat: Dry zone forests",
-      "Location: Yala, Wilpattu",
     ],
   },
   {
     id: 2,
     name: "Sri Lankan Elephant",
     image: "/images/1.jpg",
+    status: "Endangered",
     details: [
       "Scientific Name: Elephas maximus maximus",
-      "Status: Endangered",
-      "Habitat: Grasslands, forests",
-      "Location: Udawalawe, Minneriya",
+      "Habitat: Grasslands and forests",
     ],
   },
   {
     id: 3,
     name: "Purple-faced Langur",
     image: "/images/1.jpg",
+    status: "Critically Endangered",
     details: [
       "Scientific Name: Semnopithecus vetulus",
-      "Status: Critically Endangered",
-      "Habitat: Rainforests",
-      "Location: Wet zone Sri Lanka",
+      "Habitat: Tropical rainforests",
     ],
   },
 ];
 
 export default function SpeciesList() {
   return (
-    <section className="bg-[#E0E0E0] py-14 rounded-lg shadow-md mt-16">
+    <section className="bg-softbeige py-24 mt-20">
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-center text-[#263238] mb-12">
-          Extinct / Endangered Animal Dashboard
-        </h2>
+        {/* Header */}
+<div className="text-center max-w-3xl mx-auto mb-20">
+  <span className="uppercase tracking-widest text-sm text-leaf">
+    Conservation Dashboard
+  </span>
 
-        {/* Rows */}
-        <div className="space-y-10">
+  <h2 className="mt-3 text-4xl md:text-5xl font-bold text-charcoal leading-tight">
+    Species at Risk <br />
+    <span className="text-forest">Under Our Protection</span>
+  </h2>
+
+  <p className="mt-4 text-textgrey text-lg">
+    Sensitive wildlife data is displayed responsibly to support conservation
+    while preventing exploitation.
+  </p>
+</div>
+
+        {/* Cards */}
+        <div className="space-y-16">
           {speciesData.map((species) => (
             <div
               key={species.id}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
+              className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
             >
               {/* Image */}
-              <div className="w-full h-80 bg-[#2E7D32] rounded-md overflow-hidden">
+              <div className="relative h-80 rounded-2xl overflow-hidden shadow-lg">
                 <Image
                   src={species.image}
                   alt={species.name}
-                  width={500}
-                  height={300}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
+
+                {/* Status Badge */}
+                <div className="absolute top-4 left-4 bg-deepred text-offwhite text-xs font-semibold px-4 py-1 rounded-full">
+                  {species.status}
+                </div>
               </div>
 
-              {/* Details */}
+              {/* Content */}
               <div>
-                <h3 className="text-xl font-semibold text-[#263238] mb-4">
+                <h3 className="text-2xl font-semibold text-forest mb-4">
                   {species.name}
                 </h3>
 
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {species.details.map((detail, index) => (
                     <li
                       key={index}
-                      className="bg-white px-4 py-2 rounded text-sm text-[#616161]"
+                      className="bg-offwhite px-5 py-3 rounded-xl text-sm text-textgrey shadow-sm border border-black/5"
                     >
                       {detail}
                     </li>
                   ))}
                 </ul>
+
+                {/* Ethics Note */}
+                <div className="mt-6 border-l-4 border-forest pl-4 text-sm text-textgrey">
+                  Exact location data is restricted to protect this species from
+                  potential threats.
+                </div>
               </div>
             </div>
           ))}

@@ -10,74 +10,89 @@ const Navbar: FC = () => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
 
+  const isActive = (path: string) => pathname === path;
+
   const navLinkClass = (path: string) =>
-    `relative px-3 py-1 rounded-md font-medium transition-all duration-300 no-underline
-     ${
-       pathname === path
-         ? "text-[#2E7D32] bg-[#66BB6A]/20"
-         : "text-[#263238] hover:text-[#66BB6A]"
-     }`;
+    `
+    relative px-3 py-2 text-sm font-medium transition
+    ${
+      isActive(path)
+        ? "text-forest"
+        : "text-charcoal hover:text-leaf"
+    }
+    after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
+    after:scale-x-0 after:bg-forest after:transition-transform
+    hover:after:scale-x-100
+    ${isActive(path) ? "after:scale-x-100" : ""}
+  `;
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#F5F5DC] shadow-md">
+    <nav className="sticky top-0 z-50 bg-softbeige/95 backdrop-blur-md border-b border-black/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex h-16 items-center justify-between">
 
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <Link href="/">
+          {/* LEFT — Logo */}
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/images/logo.jpeg"
                 alt="EcoLens Logo"
-                width={40}
-                height={40}
+                width={38}
+                height={38}
+                className="rounded-full"
               />
-            </Link>
-            <Link
-              href="/"
-              className="text-[#2E7D32] font-bold text-xl no-underline"
-            >
-              EcoLens
+              <span className="text-xl font-bold text-forest tracking-tight">
+                EcoLens
+              </span>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-4 items-center">
+          {/* CENTER — Navigation */}
+          <div className="hidden md:flex items-center gap-6">
             <Link href="/" className={navLinkClass("/")}>Home</Link>
             <Link href="/gallery" className={navLinkClass("/gallery")}>Gallery</Link>
-            <Link href="/explore" className={navLinkClass("/explore")}>Explore Wildlife</Link>
+            <Link href="/explore" className={navLinkClass("/explore")}>
+              Explore Wildlife
+            </Link>
 
-           {session && (
-  <Link
-    href="/image-upload"
-    className={navLinkClass("/image-upload")}
-  >
-    Image Upload
-  </Link>
-)}
+            {session && (
+              <Link
+                href="/image-upload"
+                className={navLinkClass("/image-upload")}
+              >
+                Image Upload
+              </Link>
+            )}
 
-
-            <Link href="/about" className={navLinkClass("/about")}>About Us</Link>
+            <Link href="/about" className={navLinkClass("/about")}>
+              About
+            </Link>
           </div>
 
-          {/* Auth Section */}
+          {/* RIGHT — User */}
           <div className="hidden md:flex items-center gap-4">
             {status === "loading" ? null : session ? (
               <>
-                {/* Role badge */}
-                <span className="px-3 py-1 text-sm rounded-full bg-[#2E7D32] text-[#F5F5DC] capitalize">
-                  {session.user.role}
-                </span>
-
-                {/* Username */}
-                <span className="font-medium text-[#263238]">
-                  {session.user.name}
-                </span>
+                {/* Username Badge */}
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-forest/10">
+                  <div className="w-7 h-7 rounded-full bg-forest text-offwhite flex items-center justify-center text-sm font-semibold">
+                    {session.user.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-charcoal">
+                    {session.user.name}
+                  </span>
+                </div>
 
                 {/* Logout */}
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                  className="
+                    px-4 py-2 text-sm font-medium
+                    rounded-full
+                    text-earth
+                    hover:bg-earth/10
+                    transition
+                  "
                 >
                   Logout
                 </button>
@@ -86,14 +101,26 @@ const Navbar: FC = () => {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 border border-[#2E7D32] text-[#2E7D32] font-semibold rounded hover:bg-[#2E7D32] hover:text-[#F5F5DC] transition no-underline"
+                  className="
+                    px-4 py-2 text-sm font-semibold
+                    rounded-full
+                    border border-forest
+                    text-forest
+                    hover:bg-forest hover:text-offwhite
+                    transition
+                  "
                 >
                   Login
                 </Link>
 
                 <Link
                   href="/register"
-                  className="px-4 py-2 bg-[#2E7D32] text-[#F5F5DC] font-semibold rounded hover:bg-[#66BB6A] transition no-underline"
+                  className="
+                    px-4 py-2 text-sm font-semibold
+                    rounded-full
+                    bg-forest text-offwhite
+                    hover:bg-leaf transition
+                  "
                 >
                   Register
                 </Link>
