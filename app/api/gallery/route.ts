@@ -6,9 +6,9 @@ export async function GET() {
   await connectDB();
 
   const images = await Image.find({
-    isGalleryImage: true, // 🔒 ONLY gallery uploads
+    source: "photographer",   // ✅ ONLY photographer uploads
+    approved: true,           // ✅ Only approved ones
   })
-    .populate("uploadedBy", "username")
     .sort({ createdAt: -1 });
 
   return NextResponse.json(images);

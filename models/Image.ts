@@ -9,7 +9,12 @@ const ImageSchema = new mongoose.Schema(
     speciesName: { type: String, required: true },
     location: { type: String, required: true },
 
-    uploadedBy: { type: String }, // or ObjectId later
+    uploadedBy: { type: String },
+
+    // 🔥 NEW FIELDS
+    source: { type: String, enum: ["community", "photographer"], required: true },
+    approved: { type: Boolean, default: false },
+    isGalleryImage: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

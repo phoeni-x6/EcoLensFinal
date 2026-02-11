@@ -13,7 +13,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    const images = await Image.find()
+    const images = await Image.find({ isGalleryImage: true })
       .populate({
         path: "uploadedBy",
         select: "username",

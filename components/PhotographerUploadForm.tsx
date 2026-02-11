@@ -16,6 +16,7 @@ export default function PhotographerUploadForm() {
 
   const [loading, setLoading] = useState(false);
 
+  // 🔒 Only photographers can see this
   if (status === "loading") return null;
   if (!session || session.user.role !== "photographer") return null;
 
@@ -44,65 +45,83 @@ export default function PhotographerUploadForm() {
       formData.append("speciesName", speciesName);
       formData.append("location", location);
 
-      const res = await fetch("/api/image-upload", {
+      // ✅ Updated API
+      const res = await fetch("/api/photographer-upload", {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
 
-      alert("Photography submitted to the gallery!");
+      if (!res.ok) {
+        throw new Error(data.error || "Upload failed");
+      }
 
+      alert("Your photography has been submitted to the curated gallery 📸");
+
+      // Reset
       setPreview(null);
       setFile(null);
       setSpeciesType("");
       setSpeciesName("");
       setLocation("");
-    } catch {
-      alert("Upload failed.");
+
+    } catch (error: any) {
+      console.error("Photographer Upload Error:", error);
+      alert(error.message || "Upload failed.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section className="bg-charcoal text-offwhite px-6 py-20">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <section className="min-h-[85vh] bg-[var(--charcoal-black)] text-[var(--off-white)] px-6 py-20">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
-        {/* LEFT */}
+        {/* LEFT – Premium Description */}
         <div>
-          <p className="uppercase tracking-widest text-sm text-leaf mb-4">
-            Photographer Access
+          <p className="uppercase tracking-widest text-sm text-[var(--leaf-green)] mb-4">
+            Curated Photographer Access
           </p>
 
           <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
             Upload Your Wildlife Photography <br />
-            <span className="text-forest">For Our Gallery</span>
+            <span className="text-[var(--forest-green)]">
+              For The Official Gallery
+            </span>
           </h2>
 
-          <p className="text-lightgrey text-lg max-w-md">
-            Share your best wildlife moments with the EcoLens community.
-            Selected works are featured in our curated public gallery.
+          <p className="text-[var(--light-grey)] text-lg max-w-md leading-relaxed">
+            As a verified EcoLens photographer, your work becomes part of our
+            curated visual archive. Selected submissions are showcased publicly
+            and may support conservation awareness initiatives.
           </p>
+
+          <div className="mt-8 p-5 rounded-2xl bg-[var(--charcoal-black)] border border-[var(--forest-green)]/30">
+            <p className="text-sm text-[var(--light-grey)] leading-relaxed">
+              🔒 Sensitive species data is handled responsibly.  
+              Endangered species locations remain protected and are never shown publicly.
+            </p>
+          </div>
         </div>
 
-        {/* RIGHT – FORM */}
+        {/* RIGHT – Elegant Upload Card */}
         <form
           onSubmit={handleSubmit}
-          className="bg-charcoal/80 rounded-2xl p-10 space-y-6 shadow-2xl border border-white/10"
+          className="bg-[var(--charcoal-black)]/80 backdrop-blur-xl rounded-3xl p-10 space-y-6 shadow-2xl border border-[var(--forest-green)]/20"
         >
           <input
             type="text"
             placeholder="Species Type (e.g. Mammal)"
             value={speciesType}
             onChange={(e) => setSpeciesType(e.target.value)}
-            className="w-full bg-transparent border border-white/15 px-4 py-3 rounded-lg focus:outline-none focus:border-forest"
+            className="w-full bg-transparent border border-white/15 px-4 py-3 rounded-xl focus:outline-none focus:border-[var(--forest-green)] transition"
           />
 
           <select
             value={speciesName}
             onChange={(e) => setSpeciesName(e.target.value)}
-            className="w-full bg-transparent border border-white/15 px-4 py-3 rounded-lg focus:outline-none focus:border-forest"
+            className="w-full bg-transparent border border-white/15 px-4 py-3 rounded-xl focus:outline-none focus:border-[var(--forest-green)] transition"
           >
             <option value="">Select Species</option>
             <option>Elephant</option>
@@ -116,32 +135,39 @@ export default function PhotographerUploadForm() {
             placeholder="Location / National Park"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full bg-transparent border border-white/15 px-4 py-3 rounded-lg focus:outline-none focus:border-forest"
+            className="w-full bg-transparent border border-white/15 px-4 py-3 rounded-xl focus:outline-none focus:border-[var(--forest-green)] transition"
           />
 
-          {/* Upload */}
+          {/* Upload Area */}
           <label>
             <input type="file" hidden accept="image/*" onChange={handleImageChange} />
-            <div className="border border-dashed border-white/20 rounded-xl p-6 text-center cursor-pointer hover:border-leaf transition">
-              <p className="text-sm text-offwhite">Upload your photograph</p>
-              <p className="text-xs text-textgrey mt-1">
-                High quality images preferred
+            <div className="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center cursor-pointer hover:border-[var(--leaf-green)] transition">
+              <p className="text-sm text-[var(--off-white)]">
+                Upload your professional photograph
+              </p>
+              <p className="text-xs text-[var(--light-grey)] mt-1">
+                High resolution images recommended
               </p>
             </div>
           </label>
 
           {preview && (
-            <div className="relative w-full h-48 rounded-xl overflow-hidden">
-              <Image src={preview} alt="Preview" fill className="object-cover" />
+            <div className="relative w-full h-56 rounded-2xl overflow-hidden shadow-xl">
+              <Image
+                src={preview}
+                alt="Preview"
+                fill
+                className="object-cover"
+              />
             </div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-forest hover:bg-leaf text-offwhite font-semibold py-3 rounded-xl transition disabled:opacity-50"
+            className="w-full bg-[var(--forest-green)] hover:bg-[var(--leaf-green)] text-[var(--off-white)] font-semibold py-4 rounded-2xl transition disabled:opacity-50"
           >
-            {loading ? "Submitting..." : "Submit to Gallery"}
+            {loading ? "Submitting..." : "Submit to Curated Gallery"}
           </button>
         </form>
       </div>
