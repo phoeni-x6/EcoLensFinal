@@ -7,12 +7,22 @@ const ImageSchema = new mongoose.Schema(
 
     speciesType: { type: String, required: true },
     speciesName: { type: String, required: true },
-    location: { type: String, required: true },
 
-    uploadedBy: { type: String },
+    // 🔥 NEW STRUCTURED LOCATION
+    location: {
+      name: { type: String, required: true },
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
+    },
 
-    // 🔥 NEW FIELDS
-    source: { type: String, enum: ["community", "photographer"], required: true },
+    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
+    source: {
+      type: String,
+      enum: ["community", "photographer"],
+      required: true,
+    },
+
     approved: { type: Boolean, default: false },
     isGalleryImage: { type: Boolean, default: false },
   },

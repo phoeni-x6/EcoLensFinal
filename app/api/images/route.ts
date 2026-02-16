@@ -17,7 +17,6 @@ export async function GET() {
       .populate({
         path: "uploadedBy",
         select: "username",
-        options: { strictPopulate: false },
       })
       .lean();
 
@@ -28,8 +27,8 @@ export async function GET() {
     const likedSet = new Set(likes.map(l => l.imageId.toString()));
 const safeImages = images.map((img: any) => ({
   ...img,
-  uploadedBy: img.uploadedBy ?? { username: "Unknown" },
-  likeCount: Number(img.likeCount ?? 0), // ✅ GUARANTEE NUMBER
+  uploadedBy: img.uploadedBy ? { username: img.uploadedBy.username } : { username: "Unknown" },
+  likeCount: Number(img.likeCount ?? 0),
   likedByMe: userId ? likedSet.has(img._id.toString()) : false,
 }));
 

@@ -17,17 +17,17 @@ const Navbar: FC = () => {
     relative px-3 py-2 text-sm font-medium transition
     ${
       isActive(path)
-        ? "text-forest"
-        : "text-charcoal hover:text-leaf"
+        ? "text-[#F4EFE7]"
+        : "text-[#F4EFE7]/80 hover:text-white"
     }
     after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
-    after:scale-x-0 after:bg-forest after:transition-transform
+    after:scale-x-0 after:bg-[#F4EFE7] after:transition-transform
     hover:after:scale-x-100
     ${isActive(path) ? "after:scale-x-100" : ""}
   `;
 
   return (
-    <nav className="sticky top-0 z-50 bg-softbeige/95 backdrop-blur-md border-b border-black/5">
+    <nav className="sticky top-0 z-50 bg-[#2E7D32] shadow-lg border-b border-black/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
 
@@ -39,9 +39,9 @@ const Navbar: FC = () => {
                 alt="EcoLens Logo"
                 width={38}
                 height={38}
-                className="rounded-full"
+                className="rounded-full border border-white/20"
               />
-              <span className="text-xl font-bold text-forest tracking-tight">
+              <span className="text-xl font-bold text-[#F4EFE7] tracking-tight">
                 EcoLens
               </span>
             </Link>
@@ -74,11 +74,11 @@ const Navbar: FC = () => {
             {status === "loading" ? null : session ? (
               <>
                 {/* Username Badge */}
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-forest/10">
-                  <div className="w-7 h-7 rounded-full bg-forest text-offwhite flex items-center justify-center text-sm font-semibold">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/15">
+                  <div className="w-7 h-7 rounded-full bg-[#F4EFE7] text-[#2E7D32] flex items-center justify-center text-sm font-semibold">
                     {session.user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-charcoal">
+                  <span className="text-sm font-medium text-[#F4EFE7]">
                     {session.user.name}
                   </span>
                 </div>
@@ -89,8 +89,9 @@ const Navbar: FC = () => {
                   className="
                     px-4 py-2 text-sm font-medium
                     rounded-full
-                    text-earth
-                    hover:bg-earth/10
+                    border border-[#F4EFE7]/40
+                    text-[#F4EFE7]
+                    hover:bg-[#F4EFE7] hover:text-[#2E7D32]
                     transition
                   "
                 >
@@ -104,9 +105,9 @@ const Navbar: FC = () => {
                   className="
                     px-4 py-2 text-sm font-semibold
                     rounded-full
-                    border border-forest
-                    text-forest
-                    hover:bg-forest hover:text-offwhite
+                    border border-[#F4EFE7]
+                    text-[#F4EFE7]
+                    hover:bg-[#F4EFE7] hover:text-[#2E7D32]
                     transition
                   "
                 >
@@ -118,8 +119,9 @@ const Navbar: FC = () => {
                   className="
                     px-4 py-2 text-sm font-semibold
                     rounded-full
-                    bg-forest text-offwhite
-                    hover:bg-leaf transition
+                    bg-[#F4EFE7] text-[#2E7D32]
+                    hover:bg-white
+                    transition
                   "
                 >
                   Register

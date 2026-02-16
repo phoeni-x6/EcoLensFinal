@@ -1,57 +1,53 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-
-const Dashboard = () => {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") return null;
-
-  return <h1>Welcome {session?.user.name}</h1>;
-};
-
-
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import type { LatLngExpression } from "leaflet";
+import type {
+  MapContainerProps,
+  TileLayerProps,
+  MarkerProps,
+  PopupProps,
+} from "react-leaflet";
 
-// Dynamically import react-leaflet components (SSR OFF)
-const MapContainer = dynamic(
+// Properly typed dynamic imports
+const MapContainer = dynamic<MapContainerProps>(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
 );
-const TileLayer = dynamic(
+
+const TileLayer = dynamic<TileLayerProps>(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false }
 );
-const Marker = dynamic(
+
+const Marker = dynamic<MarkerProps>(
   () => import("react-leaflet").then((mod) => mod.Marker),
   { ssr: false }
 );
-const Popup = dynamic(
+
+const Popup = dynamic<PopupProps>(
   () => import("react-leaflet").then((mod) => mod.Popup),
   { ssr: false }
 );
 
-// Sample wildlife data
-const wildlifeData = [
-  {
-    id: 1,
-    animal: "Elephant",
-    position: [6.4607, 80.75],
-    location: "Udawalawe National Park",
-  },
-  {
-    id: 2,
-    animal: "Leopard",
-    position: [6.3725, 81.5166],
-    location: "Yala National Park",
-  },
-];
+interface MapImage {
+  _id: string;
+  speciesName: string;
+  location: {
+    name: string;
+    lat: number;
+    lng: number;
+  };
+}
 
 export default function WildlifeMap() {
   const [isClient, setIsClient] = useState(false);
+  const [wildlifeData, setWildlifeData] = useState<MapImage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Run Leaflet code ONLY on client
+  const sriLankaCenter: LatLngExpression = [7.8731, 80.7718];
+
   useEffect(() => {
     setIsClient(true);
 
@@ -63,36 +59,51 @@ export default function WildlifeMap() {
         shadowUrl: "/leaflet/marker-shadow.png",
       });
     });
+
+    fetch("/api/map-data")
+      .then((res) => res.json())
+      .then((data) => {
+        setWildlifeData(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Map fetch error:", err);
+        setLoading(false);
+      });
   }, []);
 
-  // Prevent render until client-side
   if (!isClient) return null;
+  if (loading) return <p className="text-center mt-10">Loading map...</p>;
 
   return (
     <div className="w-full h-[500px] rounded-lg overflow-hidden shadow-lg">
       <MapContainer
-        center={[7.8731, 80.7718]}
+        center={sriLankaCenter}
         zoom={7}
         scrollWheelZoom
         className="h-full w-full"
       >
         <TileLayer
-          attribution="&copy; OpenStreetMap contributors"
+          attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {wildlifeData.map((item) => (
-          <Marker
-            key={item.id}
-            position={item.position as [number, number]}
-          >
-            <Popup>
-              <strong>{item.animal}</strong>
-              <br />
-              {item.location}
-            </Popup>
-          </Marker>
-        ))}
+        {wildlifeData.map((item) => {
+          const position: LatLngExpression = [
+            item.location.lat,
+            item.location.lng,
+          ];
+
+          return (
+            <Marker key={item._id} position={position}>
+              <Popup>
+                <strong>{item.speciesName}</strong>
+                <br />
+                {item.location.name}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );
