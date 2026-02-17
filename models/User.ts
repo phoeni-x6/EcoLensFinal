@@ -24,7 +24,19 @@ const UserSchema = new Schema(
     },
     dwcId: {
       type: String,
-      default: null, // only for wildlife officers
+      default: null,
+    },
+
+    // ✅ NEW FIELDS
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+    },
+    verificationTokenExpires: {
+      type: Date,
     },
   },
   { timestamps: true }

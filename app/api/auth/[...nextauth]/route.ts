@@ -15,14 +15,20 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing credentials");
+          throw new Error("Email and password are required");
         }
 
         await connectDB();
 
         const user = await User.findOne({ email: credentials.email });
+
         if (!user) {
-          throw new Error("User not found");
+          throw new Error("Invalid email or password");
+        }
+
+        // 🔐 STRICT EMAIL VERIFICATION CHECK
+        if (user.isVerified !== true) {
+          throw new Error("Please verify your email before logging in.");
         }
 
         const isValid = await bcrypt.compare(
@@ -31,12 +37,11 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isValid) {
-          throw new Error("Invalid password");
+          throw new Error("Invalid email or password");
         }
 
-        // ✅ Returned object becomes `user` in jwt() callback
         return {
-          id: user._id.toString(),        // 🔑 REQUIRED
+          id: user._id.toString(),
           name: user.username,
           email: user.email,
           role: user.role,
@@ -50,7 +55,6 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    // 🔑 Put id + role into JWT
     async jwt({ token, user }) {
       if (user) {
         token.id = (user as any).id;
@@ -59,7 +63,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    // 🔑 Expose id + role on session.user
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;

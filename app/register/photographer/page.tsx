@@ -44,46 +44,71 @@ export default function PhotographerRegisterPage() {
     <>
       <Toast
         show={showToast}
-        message="Photographer account created successfully"
+        message="Account created! Please verify your email."
       />
 
-      <section className="bg-[#F5F5DC] min-h-screen flex items-center justify-center py-20">
-        <div className="bg-[#E0E0E0] w-full max-w-xl px-10 py-12 rounded-lg shadow-lg">
-          <h1 className="text-2xl font-bold text-center mb-8">
-            Photographer Registration
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1e293b] via-[#0f172a] to-[#020617] px-6">
+
+        
+        {/* Glass Card */}
+        <div className="w-full max-w-md backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-10 text-white">
+          
+          <h1 className="text-3xl font-bold text-center mb-2">
+            Join EcoLens
           </h1>
 
-          <form className="space-y-5" onSubmit={handleRegister}>
-            <input
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 rounded"
-              required
-            />
+          <p className="text-center text-sm text-white/80 mb-8">
+            Showcase your wildlife photography to the world 🌿
+          </p>
 
-            <input
-              placeholder="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded"
-              required
-            />
+          <form className="space-y-6" onSubmit={handleRegister}>
+            
+            <div>
+              <label className="block text-sm mb-2">Username</label>
+              <input
+                placeholder="Your photographer name"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                required
+              />
+            </div>
 
-            <input
-              placeholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded"
-              required
-            />
+            <div>
+              <label className="block text-sm mb-2">Email Address</label>
+              <input
+                placeholder="example@email.com"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                required
+              />
+            </div>
 
-            <button className="w-full bg-[#2E7D32] text-white py-3 rounded-full">
-              Register
+            <div>
+              <label className="block text-sm mb-2">Password</label>
+              <input
+                placeholder="Create a secure password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 transition-all duration-300 py-3 rounded-lg font-semibold shadow-lg hover:shadow-emerald-500/40"
+            >
+              Create Photographer Account
             </button>
           </form>
+
+          <p className="text-xs text-center mt-6 text-white/70">
+            By registering, you agree to EcoLens community guidelines.
+          </p>
         </div>
       </section>
     </>

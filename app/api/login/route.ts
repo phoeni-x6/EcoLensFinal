@@ -16,8 +16,8 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    // Find user by email
     const user = await User.findOne({ email });
+
     if (!user) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },
@@ -25,8 +25,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // Compare passwords
+    // 🔐 STRICT VERIFICATION CHECK
+    // Only allow login if explicitly verified === true
+    if (user.isVerified !== true) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Please verify your email before logging in.",
+        },
+        { status: 403 }
+      );
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
     if (!isPasswordValid) {
       return NextResponse.json(
         { success: false, message: "Invalid email or password" },
@@ -34,7 +46,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Successful login (DO NOT send password)
     return NextResponse.json({
       success: true,
       message: "Login successful",
@@ -46,7 +57,9 @@ export async function POST(req: Request) {
         dwcId: user.dwcId,
       },
     });
+
   } catch (error: any) {
+    console.error("Login Error:", error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

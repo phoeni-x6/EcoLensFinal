@@ -14,43 +14,43 @@ const Navbar: FC = () => {
 
   const navLinkClass = (path: string) =>
     `
-    relative px-3 py-2 text-sm font-medium transition
-    ${
-      isActive(path)
-        ? "text-[#F4EFE7]"
-        : "text-[#F4EFE7]/80 hover:text-white"
-    }
+    relative px-4 py-2 text-base font-semibold tracking-wide
+    !text-white transition-colors duration-200
     after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
-    after:scale-x-0 after:bg-[#F4EFE7] after:transition-transform
-    hover:after:scale-x-100
-    ${isActive(path) ? "after:scale-x-100" : ""}
+    after:bg-white after:origin-left after:scale-x-0
+    after:transition-transform after:duration-200
+    ${isActive(path) ? "after:scale-x-100" : "hover:after:scale-x-100"}
   `;
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#2E7D32] shadow-lg border-b border-black/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 bg-[#2E7D32] shadow-md">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="flex h-16 items-center justify-between">
 
-          {/* LEFT — Logo */}
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/images/logo.jpeg"
-                alt="EcoLens Logo"
-                width={38}
-                height={38}
-                className="rounded-full border border-white/20"
-              />
-              <span className="text-xl font-bold text-[#F4EFE7] tracking-tight">
-                EcoLens
-              </span>
-            </Link>
-          </div>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/images/logo.jpeg"
+              alt="EcoLens Logo"
+              width={40}
+              height={40}
+              className="rounded-full border border-white/40"
+            />
+            <span className="text-2xl font-bold !text-white">
+              EcoLens
+            </span>
+          </Link>
 
-          {/* CENTER — Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className={navLinkClass("/")}>Home</Link>
-            <Link href="/gallery" className={navLinkClass("/gallery")}>Gallery</Link>
+          {/* Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/" className={navLinkClass("/")}>
+              Home
+            </Link>
+
+            <Link href="/gallery" className={navLinkClass("/gallery")}>
+              Gallery
+            </Link>
+
             <Link href="/explore" className={navLinkClass("/explore")}>
               Explore Wildlife
             </Link>
@@ -69,16 +69,16 @@ const Navbar: FC = () => {
             </Link>
           </div>
 
-          {/* RIGHT — User */}
+          {/* Right Section */}
           <div className="hidden md:flex items-center gap-4">
             {status === "loading" ? null : session ? (
               <>
-                {/* Username Badge */}
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/15">
-                  <div className="w-7 h-7 rounded-full bg-[#F4EFE7] text-[#2E7D32] flex items-center justify-center text-sm font-semibold">
+                {/* User Badge */}
+                <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/20">
+                  <div className="w-8 h-8 rounded-full bg-white text-[#2E7D32] flex items-center justify-center font-semibold">
                     {session.user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-[#F4EFE7]">
+                  <span className="!text-white text-base font-medium">
                     {session.user.name}
                   </span>
                 </div>
@@ -87,12 +87,12 @@ const Navbar: FC = () => {
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
                   className="
-                    px-4 py-2 text-sm font-medium
+                    px-5 py-2 text-base font-semibold
                     rounded-full
-                    border border-[#F4EFE7]/40
-                    text-[#F4EFE7]
-                    hover:bg-[#F4EFE7] hover:text-[#2E7D32]
-                    transition
+                    border border-white
+                    !text-white
+                    hover:bg-white hover:text-[#2E7D32]
+                    transition duration-200
                   "
                 >
                   Logout
@@ -103,12 +103,12 @@ const Navbar: FC = () => {
                 <Link
                   href="/login"
                   className="
-                    px-4 py-2 text-sm font-semibold
+                    px-5 py-2 text-base font-semibold
                     rounded-full
-                    border border-[#F4EFE7]
-                    text-[#F4EFE7]
-                    hover:bg-[#F4EFE7] hover:text-[#2E7D32]
-                    transition
+                    border border-white
+                    !text-white
+                    hover:bg-white hover:text-[#2E7D32]
+                    transition duration-200
                   "
                 >
                   Login
@@ -117,11 +117,11 @@ const Navbar: FC = () => {
                 <Link
                   href="/register"
                   className="
-                    px-4 py-2 text-sm font-semibold
+                    px-5 py-2 text-base font-semibold
                     rounded-full
-                    bg-[#F4EFE7] text-[#2E7D32]
-                    hover:bg-white
-                    transition
+                    bg-white text-[#2E7D32]
+                    hover:bg-gray-100
+                    transition duration-200
                   "
                 >
                   Register
