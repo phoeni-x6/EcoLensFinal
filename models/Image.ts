@@ -8,14 +8,16 @@ const ImageSchema = new mongoose.Schema(
     speciesType: { type: String, required: true },
     speciesName: { type: String, required: true },
 
-    // 🔥 NEW STRUCTURED LOCATION
     location: {
       name: { type: String, required: true },
       lat: { type: Number, required: true },
       lng: { type: Number, required: true },
     },
 
-    uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    uploadedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
 
     source: {
       type: String,
@@ -25,6 +27,12 @@ const ImageSchema = new mongoose.Schema(
 
     approved: { type: Boolean, default: false },
     isGalleryImage: { type: Boolean, default: false },
+
+    // ✅ ADD THIS FIELD
+    likeCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

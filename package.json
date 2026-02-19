@@ -12,6 +12,7 @@
     "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
     "cloudinary": "^2.9.0",
+    "framer-motion": "^12.34.2",
     "leaflet": "^1.9.4",
     "mongoose": "^9.1.5",
     "next": "^16.1.6",
@@ -28,8 +29,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.1",
+    "eslint": "^10.0.0",
+    "eslint-config-next": "^0.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
