@@ -5,6 +5,7 @@ import CircularGallery from "@/components/CircularGallery";
 import Link from "next/link";
 import { connectDB } from "@/lib/mongodb";
 import Image from "@/models/Image";
+import HeroSectionhome from "@/components/HeroSectionhome";
 
 const HomePage = async () => {
   await connectDB();
@@ -53,6 +54,7 @@ const HomePage = async () => {
       <HeroSection />
       <AboutUs />
       <PhotographerOfMonth />
+      
 
       {/* Circular Gallery Section */}
       <section className="bg-[#0f1a12] py-20 text-white">
@@ -117,7 +119,7 @@ const HomePage = async () => {
   </div>
 </section>
 
-
+<HeroSectionhome />
 
       {/* Stats Section */}
       <section className="relative bg-gradient-to-b from-[#10271a] to-[#0b1f14] py-24 text-white">

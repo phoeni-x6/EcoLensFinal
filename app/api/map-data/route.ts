@@ -8,6 +8,7 @@ export async function GET() {
 
     const images = await Image.find({
       source: "community",
+      isEndangered: { $ne: true }, // 🔴 EXCLUDE endangered
       "location.lat": { $exists: true },
       "location.lng": { $exists: true },
     });
