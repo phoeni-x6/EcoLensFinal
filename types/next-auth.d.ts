@@ -1,17 +1,23 @@
-import NextAuth, { DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string; // ✅ ADD THIS
-      role: "tourist" | "photographer" | "officer";
-    } & DefaultSession["user"];
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      role: "tourist" | "photographer" | "officer" | "admin";
+    };
+  }
+
+  interface User {
+    role: "tourist" | "photographer" | "officer" | "admin";
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
-    id: string; // ✅ ADD THIS
-    role: "tourist" | "photographer" | "officer";
+    id: string;
+    role: "tourist" | "photographer" | "officer" | "admin";
   }
 }

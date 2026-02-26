@@ -26,9 +26,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid email or password");
         }
 
-        // 🔐 STRICT EMAIL VERIFICATION CHECK
+        // 🔐 Email verification check
         if (user.isVerified !== true) {
           throw new Error("Please verify your email before logging in.");
+        }
+
+        // 🔒 Blocked user check
+        if (user.isBlocked === true) {
+          throw new Error("Your account has been blocked.");
         }
 
         const isValid = await bcrypt.compare(
@@ -38,6 +43,13 @@ export const authOptions: NextAuthOptions = {
 
         if (!isValid) {
           throw new Error("Invalid email or password");
+        }
+
+        // 🚨 Officer manual approval check
+        if (user.role === "officer" && user.officerApproved !== true) {
+          throw new Error(
+            "Your officer account is pending admin approval."
+          );
         }
 
         return {
@@ -57,7 +69,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = (user as any).id;
+        token.id = user.id;
         token.role = (user as any).role;
       }
       return token;
@@ -69,7 +81,8 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as
           | "tourist"
           | "photographer"
-          | "officer";
+          | "officer"
+          | "admin";
       }
       return session;
     },
