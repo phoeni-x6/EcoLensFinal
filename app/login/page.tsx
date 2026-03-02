@@ -1,19 +1,8 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-
-const Dashboard = () => {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") return null;
-
-  return <h1>Welcome {session?.user.name}</h1>;
-};
-
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,16 +28,14 @@ export default function LoginPage() {
       return;
     }
 
-    /**
-     * Role-based redirect
-     * (Role is injected into session by NextAuth callbacks)
-     */
-    const sessionRes = await fetch("/api/auth/session");
-    const session = await sessionRes.json();
-
+    // Get updated session
+    const session = await getSession();
     const role = session?.user?.role;
 
-    if (role === "tourist") {
+    // 🔥 Admin redirect added
+    if (role === "admin") {
+      router.push("/admin");
+    } else if (role === "tourist") {
       router.push("/explore");
     } else if (role === "photographer") {
       router.push("/image-upload");
@@ -62,13 +49,11 @@ export default function LoginPage() {
   return (
     <section className="bg-[#F5F5DC] min-h-screen flex items-center justify-center py-20">
       <div className="bg-[#E0E0E0] w-full max-w-xl px-10 py-12 rounded-lg shadow-lg">
-
         <h1 className="text-2xl md:text-3xl font-bold text-center text-[#263238] mb-8">
           EcoLens Login
         </h1>
 
         <form className="space-y-5" onSubmit={handleLogin}>
-
           <div>
             <label className="block text-sm font-medium text-[#263238] mb-1">
               Email
@@ -104,7 +89,6 @@ export default function LoginPage() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
 
         <p className="mt-6 text-center text-sm text-[#263238]">
@@ -116,7 +100,6 @@ export default function LoginPage() {
             Sign up to use EcoLens
           </a>
         </p>
-
       </div>
     </section>
   );

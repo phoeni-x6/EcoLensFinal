@@ -18,6 +18,20 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
+        // 🔥 Hardcoded Admin Login (DEV ONLY)
+        if (
+          process.env.NODE_ENV === "development" &&
+          credentials.email === "admin@gmail.com" &&
+          credentials.password === "admin123"
+        ) {
+          return {
+            id: "dev-admin-id",
+            name: "Super Admin",
+            email: "admin@gmail.com",
+            role: "admin",
+          };
+        }
+
         await connectDB();
 
         const user = await User.findOne({ email: credentials.email });
